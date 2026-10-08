@@ -1,0 +1,11 @@
+{
+  "name": "context-window",
+  "version": "0.2.0",
+  "description": "A context-window pane: colour-coded bar and a colour legend for every category",
+  "author": { "name": "oakker-myo", "url": "https://github.com/oakker-myo" },
+  "homepage": "https://github.com/oakker-myo/claude-code-mods/tree/main/context-window",
+  "repository": "https://github.com/oakker-myo/claude-code-mods",
+  "license": "MIT",
+  "keywords": ["context", "usage", "tokens", "status"],
+  "types": "./types/index.d.ts"
+}

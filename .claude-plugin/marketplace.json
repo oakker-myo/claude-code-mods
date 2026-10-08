@@ -1,0 +1,17 @@
+{
+  "name": "claude-code-mods",
+  "description": "Claude Code mods for watching your context window and plan usage limits",
+  "owner": { "name": "oakker-myo", "url": "https://github.com/oakker-myo" },
+  "plugins": [
+    {
+      "name": "context-window",
+      "source": "./context-window",
+      "description": "Context-window pane: colour-coded bar and a colour legend for every category"
+    },
+    {
+      "name": "plan-usage",
+      "source": "./plan-usage",
+      "description": "5-hour and weekly plan usage meters with pace markers, reset countdowns and session cost"
+    }
+  ]
+}

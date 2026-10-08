@@ -1,0 +1,33 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate marketplace and mods
+        run: |
+          claude plugin validate .
+          claude plugin validate context-window
+          claude plugin validate plan-usage
+
+      - name: Test mods
+        run: |
+          claude plugin test context-window
+          claude plugin test plan-usage
