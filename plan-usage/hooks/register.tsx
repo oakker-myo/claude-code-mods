@@ -140,7 +140,9 @@ export const register: Register = on => {
           ) : null}
         </Box>
         {rowsOut.length ? (
-          rowsOut
+          <Box flexDirection="column" rowGap={1}>
+            {rowsOut}
+          </Box>
         ) : (
           <Text dimColor>No reading yet: appears on a Pro or Max plan after the first reply.</Text>
         )}
