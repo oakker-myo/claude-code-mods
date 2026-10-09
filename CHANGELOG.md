@@ -11,6 +11,7 @@ All notable changes to this project are documented here. The format follows [Kee
 ### Changed
 
 - `plan-usage` 0.2.1: a blank line between the 5-hour and weekly meters.
+- `turn-receipt` 0.2.0: the tools are a table (calls, a bar and the output fed back, per tool) showing the four busiest, with the rest and Claude's bookkeeping tools folded into one "+ more" line and a total underneath. Turns with fewer than three calls and under 1k tokens of output show one line.
 
 ### Fixed
 

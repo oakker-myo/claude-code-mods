@@ -1,7 +1,7 @@
 import { expect, test } from 'claude-code/testing'
 
 import type { Receipt } from '../types'
-import { cells, compact, duration, emptyTokens, estimate, find, outputList, shortModel, toolList, usd } from './format'
+import { cells, compact, duration, emptyTokens, estimate, find, isCompact, miniBar, shortModel, toolList, toolTable, usd } from './format'
 
 const receipt = (over: Partial<Receipt>): Receipt => ({
   turnId: 't1',
@@ -52,5 +52,30 @@ test('tool output estimate', () => {
   expect(estimate('x'.repeat(400))).toBe(100)
   expect(estimate([{ type: 'text', text: 'x'.repeat(40) }, { type: 'image', source: {} }])).toBe(1_510)
   expect(estimate(undefined)).toBe(0)
-  expect(outputList({ Bash: 3_400, Read: 8_100, Grep: 0 })).toBe('Read ≈8.1k · Bash ≈3.4k')
+})
+
+test('tool table: top four by output, bookkeeping folded, totals', () => {
+  const t = toolTable(
+    { Bash: 3, Read: 2, Edit: 2, Write: 1, Grep: 1, ExitPlanMode: 1, ToolSearch: 1 },
+    { Bash: 182, Read: 261, Edit: 46, Write: 37, Grep: 20, ExitPlanMode: 444, ToolSearch: 13 },
+  )
+  expect(t.rows.map(r => r.name)).toEqual(['Read', 'Bash', 'Edit', 'Write'])
+  expect(t.more?.names.sort()).toEqual(['ExitPlanMode', 'Grep', 'ToolSearch'])
+  expect(t.more?.calls).toBe(3)
+  expect(t.calls).toBe(11)
+  expect(t.tokens).toBe(1_003)
+  expect(isCompact(t)).toBe(false)
+})
+
+test('small turns are compact', () => {
+  expect(isCompact(toolTable({ Bash: 2 }, { Bash: 180 }))).toBe(true)
+  expect(isCompact(toolTable({ Read: 1 }, { Read: 4_000 }))).toBe(false)
+  expect(toolTable({}, {}).more).toBe(null)
+})
+
+test('mini bar scales in eighths', () => {
+  expect(miniBar(10, 10)).toBe('██████████')
+  expect(miniBar(5, 10)).toBe('█████')
+  expect(miniBar(1, 1_000)).toBe('▏')
+  expect(miniBar(0, 10)).toBe('')
 })

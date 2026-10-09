@@ -9,11 +9,13 @@ import {
   emptyTokens,
   estimate,
   find,
-  outputList,
+  isCompact,
+  miniBar,
   pct,
   shortModel,
   tail,
   toolList,
+  toolTable,
   total,
   usd,
 } from './format'
@@ -152,9 +154,8 @@ export const register: Register = on => {
     const { Box, Text } = $.ui.resolve(e)
     const all = total(r.tokens)
     const width = Math.max(16, Math.min(48, (e.viewport?.columns ?? 80) - 12))
-    const tools = toolList(r.tools)
-    const fed = outputList(r.toolOutput ?? {})
-    const fedTotal = Object.values(r.toolOutput ?? {}).reduce((s, n) => s + n, 0)
+    const table = toolTable(r.tools, r.toolOutput ?? {})
+    const maxTokens = Math.max(0, ...table.rows.map(t => t.tokens))
     const model = shortModel(r.model)
 
     const receipt = (
@@ -202,18 +203,58 @@ export const register: Register = on => {
             ))}
           </Box>
         ) : null}
-        <Box flexDirection="column">
+        {table.calls === 0 ? (
+          <Text dimColor>No tools ran</Text>
+        ) : isCompact(table) ? (
           <Text dimColor wrap="wrap">
-            {tools ? `Tools  ${tools}` : 'No tools ran'}
+            Tools {toolList(r.tools)}
+            {table.tokens > 0 ? `  ·  ≈${compact(table.tokens)} fed back` : ''}
           </Text>
-          {fedTotal > 0 ? (
-            <Text wrap="wrap">
-              <Text dimColor>Tool output fed back  </Text>
-              <Text bold>≈{compact(fedTotal)}</Text>
-              <Text dimColor>  ({fed})</Text>
+        ) : (
+          <Box flexDirection="column">
+            <Box flexDirection="row">
+              <Box width={18}>
+                <Text dimColor>Tools</Text>
+              </Box>
+              <Box width={6} justifyContent="flex-end">
+                <Text dimColor>calls</Text>
+              </Box>
+              <Box width={3} />
+              <Text dimColor>output fed back</Text>
+            </Box>
+            {table.rows.map(t => (
+              <Box key={`tool-${t.name}`} flexDirection="row">
+                <Box width={18}>
+                  <Text wrap="truncate-end">{t.name}</Text>
+                </Box>
+                <Box width={6} justifyContent="flex-end">
+                  <Text>{t.calls}</Text>
+                </Box>
+                <Box width={3} />
+                <Box width={11}>
+                  <Text color="suggestion">{miniBar(t.tokens, maxTokens)}</Text>
+                </Box>
+                <Box width={7} justifyContent="flex-end">
+                  <Text dimColor={t.tokens === 0}>{t.tokens > 0 ? `≈${compact(t.tokens)}` : '—'}</Text>
+                </Box>
+              </Box>
+            ))}
+            {table.more ? (
+              <Text dimColor wrap="truncate-end">
+                + {table.more.names.length} more ({table.more.names.join(', ')}) · {table.more.calls}{' '}
+                {table.more.calls === 1 ? 'call' : 'calls'}
+                {table.more.tokens > 0 ? `  ≈${compact(table.more.tokens)}` : ''}
+              </Text>
+            ) : null}
+            <Text dimColor>{'─'.repeat(45)}</Text>
+            <Text>
+              <Text bold>{table.calls}</Text>
+              <Text dimColor> calls · </Text>
+              <Text bold>≈{compact(table.tokens)}</Text>
+              <Text dimColor> tokens fed back</Text>
             </Text>
-          ) : null}
-        </Box>
+          </Box>
+        )}
       </Box>
     )
 

@@ -61,8 +61,18 @@ A small card under the answer that closes each turn:
 
 - **Top line**: what the turn cost (the session's cost before and after, so subagents are included), total tokens, duration, model, and how much the turn added to the context window.
 - **Bar and legend**: the turn's tokens by category: *cache read* (earlier context reused from the prompt cache), *cache write* (context newly cached), *input* (uncached input), *output* (what Claude wrote) and *subagents*.
-- **Tools**: each tool that ran, with a count, busiest first.
-- **Tool output fed back**: an estimate, at about four characters a token, of the tool results sent back to the model, by tool. It is part of the input and cache-write tokens above, not added to them.
+- **Tools**: a small table of the tools that ran, with their calls and the tool output fed back to the model. That output is an estimate, at about four characters a token, and it is part of the input and cache-write tokens above, not added to them.
+
+  ```
+  Tools              calls   output fed back
+  Read                   2   ██████████ ≈261
+  Bash                   3   ███████    ≈182
+  + 2 more (ExitPlanMode, ToolSearch) · 2 calls  ≈457
+  ─────────────────────────────────────────────
+  7 calls · ≈900 tokens fed back
+  ```
+
+  The four tools with the most output get a row; the rest, and Claude's own bookkeeping tools (ToolSearch, plan mode, todo lists), fold into one "+ more" line. A turn with fewer than three calls and under 1k tokens of output shows one line instead, e.g. `Tools Bash ×2 · ≈180 fed back`.
 
 A turn that ends on a tool call with no closing text has no answer to hang a receipt under, so it shows none.
 
@@ -82,7 +92,14 @@ claude plugin test plan-usage
 claude plugin test turn-receipt
 ```
 
-To try a change without installing, start a session with `claude --plugin-dir ./context-window --plugin-dir ./plan-usage --plugin-dir ./turn-receipt`. If you installed from a clone of this folder (`claude plugin marketplace add <folder>`), edit it and run `/reload-plugins`.
+To try a change without installing, start a session with `claude --plugin-dir ./context-window --plugin-dir ./plan-usage --plugin-dir ./turn-receipt`. If you installed from a clone of this folder (`claude plugin marketplace add <folder>`), Claude Code installs from the clone's last commit, so a change reaches your sessions once it is committed:
+
+```bash
+git commit -am "…"
+claude plugin update <mod>@claude-code-mods
+```
+
+then run `/reload-plugins` in a running session.
 
 See [CHANGELOG.md](./CHANGELOG.md) for release notes.
 

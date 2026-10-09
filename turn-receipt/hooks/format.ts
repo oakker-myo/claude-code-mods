@@ -89,13 +89,49 @@ export function estimate(content: unknown): number {
   }, 0)
 }
 
-/** `Read ≈8.1k · Bash ≈3.4k`, largest first. */
-export function outputList(out: Record<string, number>): string {
-  return Object.entries(out)
-    .filter(([, n]) => n > 0)
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, n]) => `${name} ≈${compact(n)}`)
-    .join(' · ')
+/** Claude's own bookkeeping: always folded into the "+ more" line, never a row of its own. */
+export const BOOKKEEPING = new Set(['ToolSearch', 'ExitPlanMode', 'EnterPlanMode', 'TodoWrite', 'TaskStop'])
+
+export type ToolRow = { name: string; calls: number; tokens: number }
+
+export type ToolTable = {
+  rows: ToolRow[]
+  /** Everything past the top rows, and all bookkeeping tools, folded into one line. */
+  more: { names: string[]; calls: number; tokens: number } | null
+  calls: number
+  tokens: number
+}
+
+/** The tools as table rows: the `top` busiest by output (then calls) and one folded "more" line. */
+export function toolTable(tools: Record<string, number>, output: Record<string, number>, top = 4): ToolTable {
+  const names = new Set([...Object.keys(tools), ...Object.keys(output)])
+  const all: ToolRow[] = [...names].map(name => ({ name, calls: tools[name] ?? 0, tokens: output[name] ?? 0 }))
+  all.sort((a, b) => b.tokens - a.tokens || b.calls - a.calls || a.name.localeCompare(b.name))
+
+  const rows = all.filter(r => !BOOKKEEPING.has(r.name)).slice(0, top)
+  const rest = all.filter(r => !rows.includes(r))
+  const sum = (list: ToolRow[], k: 'calls' | 'tokens') => list.reduce((s, r) => s + r[k], 0)
+
+  return {
+    rows,
+    more: rest.length ? { names: rest.map(r => r.name), calls: sum(rest, 'calls'), tokens: sum(rest, 'tokens') } : null,
+    calls: sum(all, 'calls'),
+    tokens: sum(all, 'tokens'),
+  }
+}
+
+/** Small turns draw the tools as one line instead of a table. */
+export function isCompact(t: ToolTable): boolean {
+  return t.calls < 3 && t.tokens < 1_000
+}
+
+const EIGHTHS = ['', '▏', '▎', '▍', '▌', '▋', '▊', '▉']
+
+/** A bar of up to `width` cells for `value` against `max`, in eighth-cell steps. */
+export function miniBar(value: number, max: number, width = 10): string {
+  if (max <= 0 || value <= 0) return ''
+  const eighths = Math.max(1, Math.round((value / max) * width * 8))
+  return '█'.repeat(Math.floor(eighths / 8)) + EIGHTHS[eighths % 8]
 }
 
 const TAIL = 120
