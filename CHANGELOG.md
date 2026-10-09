@@ -12,6 +12,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - `plan-usage` 0.2.1: a blank line between the 5-hour and weekly meters.
 
+### Fixed
+
+- `plan-usage` 0.2.2: the blank line between meters now shows in the band above the prompt, which ignored the gap 0.2.1 set.
+
 ## [0.2.0] - 2026-10-09
 
 ### Added
