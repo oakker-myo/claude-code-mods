@@ -1,6 +1,6 @@
 {
   "name": "context-window",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A context-window pane: colour-coded bar and a colour legend for every category",
   "author": { "name": "oakker-myo", "url": "https://github.com/oakker-myo" },
   "homepage": "https://github.com/oakker-myo/claude-code-mods/tree/main/context-window",

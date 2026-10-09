@@ -71,3 +71,31 @@ export function crossed(
   if (after === undefined) return undefined
   return [...marks].sort((a, b) => b - a).find(m => after >= m && (before ?? 0) < m)
 }
+
+/** A run of text in one style; a design is a list of lines, each a list of spans. */
+export type Span = { text: string; hex?: string; dim?: boolean }
+export type Lines = Span[][]
+
+const of = (list: Row[], kind: Row['kind']) => list.filter(r => r.kind === kind)
+
+/**
+ * The window as a waffle of `cols`×`rowsDown` one-character cells, each an equal
+ * share of it, in reading order and the legend's: the used categories largest
+ * first, then free space, then the autocompact buffer.
+ */
+export function waffle(list: Row[], cols = 25, rowsDown = 20): Lines {
+  const used = of(list, 'used').sort((a, b) => b.tokens - a.tokens)
+  const order = [...used, ...of(list, 'free'), ...of(list, 'buffer')]
+  const counts = split(order.map(r => r.tokens), cols * rowsDown, order.map(() => false))
+  const cells = order.flatMap((r, i) => Array.from({ length: counts[i]! }, () => r))
+  return Array.from({ length: rowsDown }, (_, y) => {
+    const line: Span[] = []
+    for (const r of cells.slice(y * cols, (y + 1) * cols)) {
+      const glyph = r.kind === 'used' ? '█' : GLYPH[r.kind]
+      const last = line[line.length - 1]
+      if (last && last.hex === r.hex && last.text[0] === glyph) last.text += glyph
+      else line.push({ text: glyph, hex: r.hex, dim: r.kind === 'free' })
+    }
+    return line
+  })
+}

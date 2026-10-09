@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Changed
+
+- `context-window` 0.3.0: the bar across the pane is replaced by a waffle of the whole window beside the legend: 500 cells (25 × 20), each 0.2% of the window, in the legend's order: the used categories largest first, then free space, then the autocompact buffer. It keeps one size whatever the pane's width and is to scale, yet fine enough that small categories still show. The legend lists the used categories largest first.
+
 ## [0.3.0] - 2026-10-09
 
 ### Added

@@ -2,13 +2,15 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { Category, Snapshot } from '../types'
-import { GLYPH, compact, crossed, pct, rows, split, tone } from './format'
+import { GLYPH, compact, crossed, pct, rows, tone, waffle } from './format'
 
 const PANE = 'context-window'
 const snapshot = atom({ plugin: 'context-window', key: 'snapshot' } as const, null)
 const paneOpen = atom({ plugin: 'context-window', key: 'paneOpen' } as const, false)
 
 const MARKS = [50]
+const ROW = 40
+const WAFFLE = { cols: 25, rows: 20 }
 const ORDER: Record<Category['kind'], number> = { used: 0, buffer: 1, free: 2, deferred: 3 }
 
 function title(snap: Snapshot | null): string {
@@ -101,35 +103,35 @@ export const register: Register = on => {
     const percent = snap.percent
     const list = rows(snap.categories)
     const deferred = snap.categories.filter(c => c.kind === 'deferred').reduce((s, c) => s + c.tokens, 0)
-    const cols = e.props.bodyColumns
-    // Block glyphs can draw wider than a cell on some fonts: leave slack, and
-    // draw the bar as one truncating line so it can never wrap onto a second.
-    const width = Math.max(10, Math.floor((cols - 2) * 0.9))
-    const rowWidth = Math.min(cols, 44)
+    // Largest first; each keeps the colour rows() gave it, so a category's colour holds as the order shifts.
+    const used = list.filter(c => c.kind === 'used').sort((a, b) => b.tokens - a.tokens)
+    const rest = [...list.filter(c => c.kind === 'free'), ...list.filter(c => c.kind === 'buffer')]
+    const usedTokens = used.reduce((s, c) => s + c.tokens, 0)
+    const usedShare = used.reduce((s, c) => s + c.share, 0)
 
-    const bar = (
-      <Box flexDirection="row" overflow="hidden">
-        <Text wrap="truncate-end">
-          {split(
-            list.map(c => c.tokens),
-            width,
-            list.map(c => c.kind === 'used'),
-          ).map((cells, i) => {
-            const c = list[i]!
-            return cells > 0 ? (
-              <Text color={c.hex} dimColor={c.kind === 'free'}>
-                {GLYPH[c.kind].repeat(cells)}
+    // The whole window as a fixed waffle, each cell 0.2% of it, in the legend's order.
+    const grid = (
+      <Box flexDirection="column">
+        {waffle(list, WAFFLE.cols, WAFFLE.rows).map((line, y) => (
+          <Text key={`w-${y}`}>
+            {line.map(sp => (
+              <Text color={sp.hex} dimColor={sp.dim}>
+                {sp.text}
               </Text>
-            ) : null
-          })}
-        </Text>
+            ))}
+          </Text>
+        ))}
+        <Box marginTop={1}>
+          <Text dimColor>each cell is {100 / (WAFFLE.cols * WAFFLE.rows)}% of the window</Text>
+        </Box>
       </Box>
     )
 
-    const legend = list.map(c => (
-      <Box key={c.name} width={rowWidth} flexDirection="row">
+    const entry = (c: (typeof list)[number]) => (
+      <Box key={c.name} width={ROW} flexDirection="row">
         <Text color={c.hex} dimColor={c.kind === 'free'}>
-          {GLYPH[c.kind].repeat(2)}{'  '}
+          {GLYPH[c.kind].repeat(2)}
+          {'  '}
         </Text>
         <Box flexGrow={1}>
           <Text dimColor={c.kind !== 'used'} wrap="truncate">
@@ -141,7 +143,25 @@ export const register: Register = on => {
         </Text>
         <Text dimColor>{pct(c.share).padStart(7)}</Text>
       </Box>
-    ))
+    )
+
+    const legend = (
+      <Box flexDirection="column">
+        <Text>
+          <Text bold>Used</Text>
+          <Text dimColor>
+            {'  '}
+            {compact(usedTokens)} · {pct(usedShare)}
+          </Text>
+        </Text>
+        <Box flexDirection="column" marginTop={1}>
+          {used.map(entry)}
+        </Box>
+        <Box flexDirection="column" marginTop={1}>
+          {rest.map(entry)}
+        </Box>
+      </Box>
+    )
 
     return (
       <Box flexDirection="column" paddingX={1}>
@@ -154,9 +174,9 @@ export const register: Register = on => {
             {snap.tokens === undefined ? '—' : compact(snap.tokens)} / {compact(snap.window)} tokens
           </Text>
         </Text>
-        <Box marginY={1}>{bar}</Box>
-        <Box flexDirection="row" flexWrap="wrap" columnGap={3}>
+        <Box marginTop={1} flexDirection="row" flexWrap="wrap" columnGap={4} rowGap={1}>
           {legend}
+          {grid}
         </Box>
         {deferred > 0 ? (
           <Box marginTop={1}>

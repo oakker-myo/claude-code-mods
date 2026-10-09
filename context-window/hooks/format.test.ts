@@ -1,7 +1,7 @@
 import { expect, test } from 'claude-code/testing'
 
 import type { Category } from '../types'
-import { compact, pct, rows, split } from './format'
+import { compact, pct, rows, split, waffle } from './format'
 
 const cats: Category[] = [
   { name: 'System prompt', tokens: 4_000, color: 'promptBorder', kind: 'used' },
@@ -33,4 +33,16 @@ test('labels', () => {
   expect(compact(1_000_000)).toBe('1M')
   expect(pct(5)).toBe('5.0%')
   expect(pct(85.4)).toBe('85%')
+})
+
+const width = (line: { text: string }[]) => line.reduce((s, x) => s + x.text.length, 0)
+
+test('waffle keeps a fixed size, largest used first, the buffer last', () => {
+  const w = waffle(rows(cats), 25, 20)
+  expect(w.length).toBe(20)
+  expect(w.every(l => width(l) === 25)).toBe(true)
+  const list = rows(cats)
+  const messages = list.find(r => r.name === 'Messages')!
+  expect(w[0]![0]!.hex).toBe(messages.hex)
+  expect(w[19]!.at(-1)!.text.at(-1)).toBe('▒')
 })
