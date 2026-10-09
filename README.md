@@ -2,9 +2,11 @@
 
 Three [Claude Code](https://claude.com/claude-code) mods for keeping an eye on how much room you have left and what you spend: your **context window**, your **plan usage limits**, and a **receipt for each turn**. They work in the terminal and in the Claude desktop app's Code tab.
 
+![The three mods in the desktop app's Code tab: the context-window pane on the right, a turn receipt under the answer, and the plan-usage band above the prompt](./docs/screenshot.png)
+
 | Mod | Where it shows | What it shows |
 | --- | --- | --- |
-| [`context-window`](./context-window) | A pane beside the conversation | A colour-coded bar of what fills the context window, with a legend of every category (tokens and share), the autocompact buffer, and a warning at 50% |
+| [`context-window`](./context-window) | A pane beside the conversation | A waffle chart of what fills the context window and a legend of every category (tokens and share), largest first, the autocompact buffer, and a warning at 50% |
 | [`plan-usage`](./plan-usage) | A band above the prompt | 5-hour and weekly limit meters with a pace marker, time until reset, an ahead/under-pace label, and the session's cost |
 | [`turn-receipt`](./turn-receipt) | A card under each turn's answer | What the turn cost, its tokens by category, duration, model, the tools that ran, and how much tool output went back to the model |
 
@@ -41,8 +43,8 @@ claude plugin install turn-receipt@claude-code-mods --scope user
 
 ### context-window
 
-- **Bar**: one coloured section per category in the window. The amber hatched section is the *autocompact buffer*: space Claude Code keeps free so it can summarise the conversation when the window fills; autocompact starts where it begins. Faint grey is free space.
-- **Legend**: a swatch, name, token count and share of the window for every category. Tool schemas that load on demand sit outside the window and are summed in a note underneath.
+- **Waffle**: the whole window as 500 cells (25 × 20), each 0.2% of it, beside the legend and in its order: the used categories in their colours, largest first, then free space (faint), with the amber autocompact buffer last. It is to scale and keeps one size whatever the pane's width.
+- **Legend**: the used categories largest first, each with a swatch, tokens and share of the window; then free space and the *autocompact buffer* (amber), space Claude Code keeps free so it can summarise the conversation when the window fills. Tool schemas that load on demand sit outside the window and are summed in a note underneath.
 - **Warning**: a notification when the window passes 50%, suggesting `/compact`.
 - **Pane title**: carries the live percentage, e.g. `Context window · 11%`.
 
