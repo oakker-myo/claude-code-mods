@@ -73,9 +73,10 @@ test('small turns are compact', () => {
   expect(toolTable({}, {}).more).toBe(null)
 })
 
-test('mini bar scales in eighths', () => {
+test('mini bar uses whole blocks, at least one', () => {
   expect(miniBar(10, 10)).toBe('██████████')
   expect(miniBar(5, 10)).toBe('█████')
-  expect(miniBar(1, 1_000)).toBe('▏')
+  expect(miniBar(1, 1_000)).toBe('█')
+  expect(miniBar(26, 100)).toBe('███')
   expect(miniBar(0, 10)).toBe('')
 })

@@ -1,6 +1,6 @@
 {
   "name": "turn-receipt",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A receipt under each turn's answer: cost, tokens by category, duration, model and the tools that ran",
   "author": { "name": "oakker-myo", "url": "https://github.com/oakker-myo" },
   "homepage": "https://github.com/oakker-myo/claude-code-mods/tree/main/turn-receipt",

@@ -125,13 +125,13 @@ export function isCompact(t: ToolTable): boolean {
   return t.calls < 3 && t.tokens < 1_000
 }
 
-const EIGHTHS = ['', '▏', '▎', '▍', '▌', '▋', '▊', '▉']
-
-/** A bar of up to `width` cells for `value` against `max`, in eighth-cell steps. */
+/**
+ * A bar of up to `width` whole cells for `value` against `max`, at least one.
+ * Whole blocks only: fonts draw the partial blocks (▏…▉) at uneven heights.
+ */
 export function miniBar(value: number, max: number, width = 10): string {
   if (max <= 0 || value <= 0) return ''
-  const eighths = Math.max(1, Math.round((value / max) * width * 8))
-  return '█'.repeat(Math.floor(eighths / 8)) + EIGHTHS[eighths % 8]
+  return '█'.repeat(Math.max(1, Math.round((value / max) * width)))
 }
 
 const TAIL = 120
