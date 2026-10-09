@@ -1,6 +1,6 @@
 {
   "name": "plan-usage",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "5-hour and weekly plan usage meters with pace markers, reset countdowns and session cost, above the prompt",
   "author": { "name": "oakker-myo", "url": "https://github.com/oakker-myo" },
   "homepage": "https://github.com/oakker-myo/claude-code-mods/tree/main/plan-usage",

@@ -17,6 +17,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - `plan-usage` 0.2.2: the blank line between meters now shows in the band above the prompt, which ignored the gap 0.2.1 set.
 - `plan-usage` 0.2.3: on the desktop the gap between meters is a small fixed space instead of a whole blank line; the terminal keeps the line.
+- `plan-usage` 0.2.4: the band shows again on the desktop. The 6px spacer from 0.2.3 stopped it rendering; the meters now sit on consecutive lines, since spacing comes in whole rows.
 - `turn-receipt` 0.2.1: the tool bars use whole blocks only, since fonts draw the partial blocks at uneven heights.
 
 ## [0.2.0] - 2026-10-09

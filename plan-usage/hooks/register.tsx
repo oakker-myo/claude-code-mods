@@ -140,18 +140,7 @@ export const register: Register = on => {
           ) : null}
         </Box>
         {rowsOut.length ? (
-          // An explicit blank line between meters: the band does not honour rowGap.
-          <Box flexDirection="column">
-            {rowsOut.flatMap((r, i) =>
-              i === 0
-                ? [r]
-                : [
-                    // A desktop lays out in pixels, so a small gap; the terminal spaces by whole rows.
-                    e.surface === 'desktop' ? <Box key={`gap-${i}`} height="6px" /> : <Text key={`gap-${i}`}> </Text>,
-                    r,
-                  ],
-            )}
-          </Box>
+          <Box flexDirection="column">{rowsOut}</Box>
         ) : (
           <Text dimColor>No reading yet: appears on a Pro or Max plan after the first reply.</Text>
         )}
