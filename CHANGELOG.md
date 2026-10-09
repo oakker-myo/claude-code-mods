@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-09
+
 ### Changed
 
 - `context-window` 0.3.0: the bar across the pane is replaced by a waffle of the whole window beside the legend: 500 cells (25 × 20), each 0.2% of the window, in the legend's order: the used categories largest first, then free space, then the autocompact buffer. It keeps one size whatever the pane's width and is to scale, yet fine enough that small categories still show. The legend lists the used categories largest first.
@@ -33,6 +35,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - `context-window`: a pane with a colour-coded context bar, a legend of every category with tokens and share, the autocompact buffer in its own colour, a live percentage in the pane title, a status-line entry, and a notification at 50%. `/context-window` opens or closes the pane.
 - `plan-usage`: a band above the prompt with 5-hour and weekly limit meters, a pace marker, reset countdowns, an ahead/under-pace label and the session's cost; a status-line entry and notifications at 80% and 95%. `/plan-usage` shows or hides the band.
 
-[Unreleased]: https://github.com/oakker-myo/claude-code-mods/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/oakker-myo/claude-code-mods/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/oakker-myo/claude-code-mods/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/oakker-myo/claude-code-mods/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/oakker-myo/claude-code-mods/releases/tag/v0.2.0
