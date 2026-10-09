@@ -1,13 +1,14 @@
 # claude-code-mods
 
-Two [Claude Code](https://claude.com/claude-code) mods for keeping an eye on how much room you have left: one for the **context window**, one for your **plan usage limits**. They work in the terminal and in the Claude desktop app's Code tab.
+Three [Claude Code](https://claude.com/claude-code) mods for keeping an eye on how much room you have left and what you spend: your **context window**, your **plan usage limits**, and a **receipt for each turn**. They work in the terminal and in the Claude desktop app's Code tab.
 
 | Mod | Where it shows | What it shows |
 | --- | --- | --- |
 | [`context-window`](./context-window) | A pane beside the conversation | A colour-coded bar of what fills the context window, with a legend of every category (tokens and share), the autocompact buffer, and a warning at 50% |
 | [`plan-usage`](./plan-usage) | A band above the prompt | 5-hour and weekly limit meters with a pace marker, time until reset, an ahead/under-pace label, and the session's cost |
+| [`turn-receipt`](./turn-receipt) | A card under each turn's answer | What the turn cost, its tokens by category, duration, model, the tools that ran, and how much tool output went back to the model |
 
-Both also add a short entry to the status line.
+`context-window` and `plan-usage` also add a short entry to the status line.
 
 ## Install
 
@@ -16,6 +17,7 @@ In a Claude Code terminal session:
 ```
 /plugin install context-window --marketplace oakker-myo/claude-code-mods
 /plugin install plan-usage --marketplace oakker-myo/claude-code-mods
+/plugin install turn-receipt --marketplace oakker-myo/claude-code-mods
 ```
 
 Answer `y` to add the marketplace, then pick a scope (the user scope loads them in every session). Installed at the user scope from a terminal, they also load in the desktop app's Code tab.
@@ -26,6 +28,7 @@ Or from a shell:
 claude plugin marketplace add oakker-myo/claude-code-mods
 claude plugin install context-window@claude-code-mods --scope user
 claude plugin install plan-usage@claude-code-mods --scope user
+claude plugin install turn-receipt@claude-code-mods --scope user
 ```
 
 ## Usage
@@ -34,6 +37,7 @@ claude plugin install plan-usage@claude-code-mods --scope user
 | --- | --- |
 | `/context-window` | Open or close the context-window pane |
 | `/plan-usage` | Show or hide the plan-usage band |
+| `/turn-receipt` | Show or hide the receipts under each turn |
 
 ### context-window
 
@@ -51,6 +55,17 @@ claude plugin install plan-usage@claude-code-mods --scope user
 
 Plan meters appear on Pro and Max plans after the first reply of a session.
 
+### turn-receipt
+
+A small card under the answer that closes each turn:
+
+- **Top line**: what the turn cost (the session's cost before and after, so subagents are included), total tokens, duration, model, and how much the turn added to the context window.
+- **Bar and legend**: the turn's tokens by category: *cache read* (earlier context reused from the prompt cache), *cache write* (context newly cached), *input* (uncached input), *output* (what Claude wrote) and *subagents*.
+- **Tools**: each tool that ran, with a count, busiest first.
+- **Tool output fed back**: an estimate, at about four characters a token, of the tool results sent back to the model, by tool. It is part of the input and cache-write tokens above, not added to them.
+
+A turn that ends on a tool call with no closing text has no answer to hang a receipt under, so it shows none.
+
 ## Requirements
 
 Claude Code with plugin hooks modules (2.1.293 or later).
@@ -64,9 +79,10 @@ claude plugin validate .
 claude plugin validate context-window
 claude plugin test context-window
 claude plugin test plan-usage
+claude plugin test turn-receipt
 ```
 
-To try a change without installing, start a session with `claude --plugin-dir ./context-window --plugin-dir ./plan-usage`. If you installed from a clone of this folder (`claude plugin marketplace add <folder>`), edit it and run `/reload-plugins`.
+To try a change without installing, start a session with `claude --plugin-dir ./context-window --plugin-dir ./plan-usage --plugin-dir ./turn-receipt`. If you installed from a clone of this folder (`claude plugin marketplace add <folder>`), edit it and run `/reload-plugins`.
 
 See [CHANGELOG.md](./CHANGELOG.md) for release notes.
 

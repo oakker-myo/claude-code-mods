@@ -1,6 +1,6 @@
 {
   "name": "claude-code-mods",
-  "description": "Claude Code mods for watching your context window and plan usage limits",
+  "description": "Claude Code mods for watching your context window, plan usage limits and what each turn costs",
   "owner": { "name": "oakker-myo", "url": "https://github.com/oakker-myo" },
   "plugins": [
     {
@@ -12,6 +12,11 @@
       "name": "plan-usage",
       "source": "./plan-usage",
       "description": "5-hour and weekly plan usage meters with pace markers, reset countdowns and session cost"
+    },
+    {
+      "name": "turn-receipt",
+      "source": "./turn-receipt",
+      "description": "A receipt under each turn's answer: cost, tokens by category, duration, model and the tools that ran"
     }
   ]
 }

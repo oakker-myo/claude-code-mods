@@ -26,8 +26,10 @@ jobs:
           claude plugin validate .
           claude plugin validate context-window
           claude plugin validate plan-usage
+          claude plugin validate turn-receipt
 
       - name: Test mods
         run: |
           claude plugin test context-window
           claude plugin test plan-usage
+          claude plugin test turn-receipt

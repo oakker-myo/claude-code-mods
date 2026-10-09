@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+
+- `turn-receipt` 0.1.0: a receipt under each turn's answer with the turn's cost, total tokens, duration, model and context added; a colour bar and legend of tokens by category (cache read, cache write, input, output, subagents); the tools that ran; and an estimate of the tool output fed back to the model, by tool. `/turn-receipt` shows or hides receipts.
+
 ### Changed
 
 - `plan-usage` 0.2.1: a blank line between the 5-hour and weekly meters.
